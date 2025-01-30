@@ -59,6 +59,8 @@ function ngAddFn(options: NgAddSchematicsSchema): Rule {
     return chain([
       // eslint-disable-next-line @typescript-eslint/naming-convention
       setupSchematicsParamsForProject({ '*:ng-add': { registerDevtool: options.withDevtool } }, options.projectName),
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      options.exactO3rVersion ? setupSchematicsParamsForProject({ '*:*': { exactO3rVersion: true } }, options.projectName) : noop(),
       options.projectName ? prepareProject(options, dependenciesSetupConfig) : noop(),
       registerPackageCollectionSchematics(corePackageJsonContent),
       async (t, c) => {

@@ -26,14 +26,23 @@ function ngAddFn(options: NgAddSchematicsSchema): Rule {
       setupDependencies,
       getO3rPeerDeps,
       getProjectNewDependenciesTypes,
-      getPackageInstallConfig
+      getPackageInstallConfig,
+      getSchematicOptions
     } = await import('@o3r/schematics');
+    const workspaceConfig = getWorkspaceConfig(tree);
+    options = {
+      ...(workspaceConfig ? getSchematicOptions(workspaceConfig, context) : {}),
+      ...options
+    };
+    context.logger.warn('@o3r/application:ng-add workspaceConfig: ' + JSON.stringify({ workspaceConfig }));
+    context.logger.warn('@o3r/application:ng-add options: ' + JSON.stringify({ options }));
+
     const { isImported } = await import('@schematics/angular/utility/ast-utils');
     const ts = await import('typescript');
     const packageJsonPath = path.resolve(__dirname, '..', '..', 'package.json');
     const depsInfo = getO3rPeerDeps(packageJsonPath);
 
-    const workspaceProject = options.projectName ? getWorkspaceConfig(tree)?.projects[options.projectName] : undefined;
+    const workspaceProject = options.projectName ? workspaceConfig?.projects[options.projectName] : undefined;
 
     const addAngularAnimationPreferences: Rule = () => {
       const additionalRules: Rule[] = [];

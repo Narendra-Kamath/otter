@@ -87,7 +87,7 @@ describe('Create new otter project command', () => {
     expect(() => packageManagerInstall(execInAppOptions)).not.toThrow();
 
     const appName = 'test-application';
-    expect(() => packageManagerExec({ script: 'ng', args: ['g', 'application', appName, '--exact-o3r-version'] }, execInAppOptions)).not.toThrow();
+    expect(() => packageManagerExec({ script: 'ng', args: ['g', 'application', appName] }, execInAppOptions)).not.toThrow();
     expect(existsSync(path.join(inProjectPath, 'project'))).toBe(false);
     expect(() => packageManagerRunOnProject(appName, true, { script: 'build' }, execInAppOptions)).not.toThrow();
 
@@ -98,8 +98,9 @@ describe('Create new otter project command', () => {
     [
       ...Object.entries(rootPackageJson.dependencies), ...Object.entries(rootPackageJson.devDependencies), ...Object.entries(resolutions),
       ...Object.entries(appPackageJson.dependencies), ...Object.entries(appPackageJson.devDependencies)
-    ].filter(([dep]) => dep.startsWith('@o3r/') || dep.startsWith('@ama-sdk/')).forEach(([,version]) => {
-      expect(version).toBe(o3rExactVersion);
+    ].filter(([dep]) => dep.startsWith('@o3r/') || dep.startsWith('@ama-sdk/')).forEach(([dep, version]) => {
+      // Adding `dep` to simplify the debug
+      expect(`${dep}=${version as string}`).toBe(`${dep}=${o3rExactVersion}`);
     });
   });
 });
